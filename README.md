@@ -107,6 +107,9 @@ You can choose multiple ways to present your button:
 - **defaultPayment**: Payment name, if you want to show a particular payment
 - **choice**: Payment name and token address, prechoose and only keep the Subscribe button
 - **response**: Informs you if a subscription is done successfully.
+- **mode**: Choose mainnet or testnet, depending on the blockchain you are using.
+- **apiKey**: Api Key of the AppID. You can find your Key whan managing our App.
+
 
 ## Get your Api Key
 
