@@ -129,7 +129,7 @@ First, you need to accept our terms and conditions by checking the check box.
 Users will need to approve an amount of token before the subscription. We will later debit the amount with TransferFrom calls periodically.
 
 <div align="center">
-<img src="https://docs.subsprotocol.com/~gitbook/image?url=https%3A%2F%2F1911528868-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252FMi4ivT4S6SjuAElL2Iuo%252Fuploads%252F0GWBtz620YeaN3Ry7lio%252Fimage.png%3Falt%3Dmedia%26token%3D10e72901-a636-4af8-9173-1a5a2cba55f1&width=768&dpr=4&quality=100&sign=4e17a53d&sv=1" />
+<img src="https://docs.subsprotocol.com/~gitbook/image?url=https%3A%2F%2F1911528868-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252FMi4ivT4S6SjuAElL2Iuo%252Fuploads%252F0GWBtz620YeaN3Ry7lio%252Fimage.png%3Falt%3Dmedia%26token%3D10e72901-a636-4af8-9173-1a5a2cba55f1&width=768&dpr=4&quality=100&sign=4e17a53d&sv=1" style="width:50%;"/>
 </div>
 
 ### Sign to Subscribe
