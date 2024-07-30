@@ -108,12 +108,28 @@ You can choose multiple ways to present your button:
 - **choice**: Payment name and token address, prechoose and only keep the Subscribe button
 - **response**: Informs you if a subscription is done successfully.
 
+## Get your Api Key
+
+After creating your App go on the My Apps section on the left side of the website.
+
+Then click on Manage of the App you want to set up
+
+<div align="center">
+<img src="https://docs.subsprotocol.com/~gitbook/image?url=https%3A%2F%2F1911528868-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252FMi4ivT4S6SjuAElL2Iuo%252Fuploads%252Fv2dYRsdy9x1iyrMpHwah%252Fapps.png%3Falt%3Dmedia%26token%3D0dabfea4-08c5-4b40-8e60-05f3a23b8a49&width=768&dpr=1&quality=100&sign=d0c091c9&sv=1" style="width:50%;" />
+</div>
+
+Wait a few seconds, your Api Key will appear on you screen right here.
+
+<div align="center">
+<img src="https://docs.subsprotocol.com/~gitbook/image?url=https%3A%2F%2F1911528868-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252FMi4ivT4S6SjuAElL2Iuo%252Fuploads%252F2ZV01gupXeuqyjS4CLet%252Fkey.jpg%3Falt%3Dmedia%26token%3D0924db74-68db-4ffd-ac66-b519b7e327c4&width=768&dpr=1&quality=100&sign=88a4b072&sv=1" style="width:50%;" />
+</div>
+
 ## Popup
 
 If the Popup doesn't show up, some parts of your CSS may cause some issues.
 
 <div align="center">
-<img src="https://docs.subsprotocol.com/~gitbook/image?url=https%3A%2F%2F1911528868-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252FMi4ivT4S6SjuAElL2Iuo%252Fuploads%252Fn4U204jUrDnMXvaEU1Rg%252Fimage.png%3Falt%3Dmedia%26token%3Dfaecc038-ff6e-4f13-9b68-9391ae25a5fc&width=768&dpr=4&quality=100&sign=e3a70967&sv=1" />
+<img src="https://docs.subsprotocol.com/~gitbook/image?url=https%3A%2F%2F1911528868-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252FMi4ivT4S6SjuAElL2Iuo%252Fuploads%252Fn4U204jUrDnMXvaEU1Rg%252Fimage.png%3Falt%3Dmedia%26token%3Dfaecc038-ff6e-4f13-9b68-9391ae25a5fc&width=768&dpr=4&quality=100&sign=e3a70967&sv=1" style="width:50%;" />
 </div>
 
 ### First view of the Popup
@@ -121,7 +137,7 @@ If the Popup doesn't show up, some parts of your CSS may cause some issues.
 First, you need to accept our terms and conditions by checking the check box.
 
 <div align="center">
-<img src="https://docs.subsprotocol.com/~gitbook/image?url=https%3A%2F%2F1911528868-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252FMi4ivT4S6SjuAElL2Iuo%252Fuploads%252FHZj7YYLkj8q9HlFjFqml%252Fimage.png%3Falt%3Dmedia%26token%3D7e8f02c2-12d9-47c1-85db-c56c49afaac7&width=768&dpr=1&quality=100&sign=75c940aa&sv=1" />
+<img src="https://docs.subsprotocol.com/~gitbook/image?url=https%3A%2F%2F1911528868-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252FMi4ivT4S6SjuAElL2Iuo%252Fuploads%252FHZj7YYLkj8q9HlFjFqml%252Fimage.png%3Falt%3Dmedia%26token%3D7e8f02c2-12d9-47c1-85db-c56c49afaac7&width=768&dpr=1&quality=100&sign=75c940aa&sv=1" style="width:50%;" />
 </div>
 
 ### Approval Step
