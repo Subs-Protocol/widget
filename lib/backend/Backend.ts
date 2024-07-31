@@ -7,7 +7,8 @@ import { AlephApp, AppPayment, PublicData, PublicPaymentIdName } from "./backend
 import { formatAddr, getChainDatas, getChainFormatted, utils } from "../utils/utils";
 import { writeContract, readContract } from "@wagmi/core";
 import { APIServer, alephUtils, subsApi } from '../utils';
-
+import md5 from "blueimp-md5";
+import { ethers } from 'ethers';
 
 export function separate(selectedToken: any) {
     const motsSepares = selectedToken.split(' ');
@@ -21,7 +22,7 @@ export const aleph = async (
     type: string,
     postType: string,
     tags: string,
-    account:string
+    account: string
 ) => {
     let response;
     switch (type) {
@@ -129,7 +130,44 @@ export const allowance = async (chain: string, token: any, user: any) => {
     return data;
 };
 
-export const subscribe = async (apiKey: string, appId: string, paymentId: string, token: string, chain: string, user: string, userChoosenPeriod: number, etherSigner: any, checkout?:any) => {
+function hexToString(hex: string) {
+    let str = '';
+    for (let i = 0; i < hex.length; i += 2) {
+        const charCode = parseInt(hex.substr(i, 2), 16);
+        // Filtrer les caractères non imprimables et de contrôle (0-31, sauf newline et tab)
+        if (charCode >= 32 || charCode === 10 || charCode === 9) {
+            str += String.fromCharCode(charCode);
+        }
+    }
+    return str;
+}
+
+export function extractHexValues(inputString: string) {
+    const hexRegex = /0x[0-9a-fA-F]+/g;
+    const hexMatches = inputString.match(hexRegex);
+
+    if (hexMatches) {
+        return hexToString(hexMatches.toString());
+    } else {
+        return [].toString();
+    }
+}
+
+const simulateCall = async (chain: string, user: string, appId: string, paymentId: string, token: string, signature: string, userChoosenPeriod: number): Promise<string> => {
+    let simulation = "";
+    try {
+        let chainDatas = getChainDatas(chain)
+        const provider = new ethers.JsonRpcProvider(chainDatas.rpc);
+        const contract = new ethers.Contract(chainDatas.address, utils.contractABI, provider);
+        await contract.permit_subscribe.staticCall(user, Number(appId), paymentId, token, signature, userChoosenPeriod);
+        return simulation = "true";
+    } catch (error: any) {
+        simulation = extractHexValues(error.data);
+        return simulation
+    }
+}
+
+export const subscribe = async (apiKey: string, appId: string, paymentId: string, token: string, chain: string, user: string, userChoosenPeriod: number, etherSigner: any, checkout?: any) => {
     let subsAddress: any = getChainDatas(chain).address;
     let subsChain: any = getChainDatas(chain).id.chainId;
     const userNonce: any = await readContract({
@@ -161,31 +199,74 @@ export const subscribe = async (apiKey: string, appId: string, paymentId: string
     let signature = await etherSigner.signTypedData(domain, types, value);
     if (signature) {
         let finalResponse: any;
-        await axios({
-            method: 'post',
-            headers: {
-                'x-api-key': apiKey,
-                'Content-Type': 'application/json'
-            },
-            data: {
-                'chain': chain,
-                'user': user,
-                'appId': appId,
-                'paymentId': paymentId,
-                'token': token,
-                'sig': signature,
-                'userChoosenPeriod': userChoosenPeriod,
-                'checkout': checkout
-            },
-            url: subsApi + '/creator/subscribe',
-        })
-            .then(function (response) {
-                // console.log("subscribe response : ", response.data);
-                finalResponse = response.data;
-            }).catch(function (error) {
-                // console.log("subscribe error : ", error.response.data);
-                finalResponse = error.response.data;
-            });
-        return finalResponse;
+        // get current minute timestamp
+        let simulation = await simulateCall(chain, user, appId, paymentId, token, signature, userChoosenPeriod);
+        if (simulation == "true") {
+            let timestamp = Date.now();
+            let hashKey = md5(apiKey + timestamp);
+            await axios({
+                method: 'post',
+                headers: {
+                    'fromWidget': true,
+                    'x-api-key': hashKey,
+                    'Content-Type': 'application/json'
+                },
+                data: {
+                    'chain': chain,
+                    'user': user,
+                    'appId': appId,
+                    'paymentId': paymentId,
+                    'token': token,
+                    'sig': signature,
+                    'userChoosenPeriod': userChoosenPeriod,
+                    'checkout': checkout
+                },
+                url: subsApi + '/creator/subscribe',
+            })
+                .then(function (response) {
+                    // console.log("subscribe response : ", response.data);
+                    finalResponse = response.data;
+                }).catch(function (error) {
+                    // console.log("subscribe error : ", error.response.data);
+                    finalResponse = error.response.data;
+                });
+            return finalResponse;
+        } else {
+            return finalResponse = { simulation: false, message: simulation }
+        }
     }
 };
+
+
+// export const changeTokenPayment = async (privateKey: string, mode: string, chain: string, appId: string, paymentName: string, paymentId: string, oldToken: string, newToken: string, newPrice: number, decimals: number, firstAmount: string): Promise<string> => {
+//     let simulation = "";
+//     try {
+//         let chainDatas = getChainDatas(chain)
+//         const provider = new ethers.JsonRpcProvider(chainDatas.rpc);
+//         const signer = new ethers.Wallet(
+//             privateKey,
+//             provider
+//         );
+//         const contract = new ethers.Contract(chainDatas.address, utils.contractABI, signer);
+//         await contract.changeTokenPayment.staticCall(appId, paymentId, oldToken, newToken, newPrice * 10 ** decimals, firstAmount);
+//         let changeToken = await contract.changeTokenPayment(appId, paymentId, oldToken, newToken, newPrice, firstAmount);
+//         // get aleph hash to modify the payment
+//         const appDB = mode == "testnet" ? alephUtils.test.appDB : alephUtils.prod.appDB;
+//         const account = { address: mode == "testnet" ? alephUtils.test.alephAccount : alephUtils.prod.alephAccount };
+//         let subsApps: any = await aleph(account, 'get', '', appDB, "", '');
+//         let app = subsApps.posts.filter((app: any) => app.content.body.appId == appId && getChainFormatted(app.content.body.chain) == chain);
+//         let item_hash = app[0].hash;
+//         let appData = app[0].content.body;
+//         appData.payments.filter((payment: any) => payment.name == paymentName)
+//         [0].tokens.filter((token: any) => token.address == oldToken).address = newToken;
+//         appData.payments.filter((payment: any) => payment.name == paymentName)
+//         [0].tokens.filter((token: any) => token.address == oldToken).amount = newPrice;
+//         appData.payments.filter((payment: any) => payment.name == paymentName)
+//         [0].tokens.filter((token: any) => token.address == oldToken).decimals = decimals;
+//         await aleph(account, 'update', '', appDB, item_hash, appData);
+//         return changeToken;
+//     } catch (error: any) {
+//         simulation = extractHexValues(error.data);
+//         return simulation
+//     }
+// }

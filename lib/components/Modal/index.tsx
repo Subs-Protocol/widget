@@ -73,6 +73,8 @@ const SubscribeReview: FC<ReviewProps> = (props) => {
             setApproveDone(false);
         }
         console.log("Allowance: ", format);
+        console.log("Required: ", reqAmount);
+        
         return Number(alw);
     }
 
@@ -156,7 +158,7 @@ const SubscribeReview: FC<ReviewProps> = (props) => {
         setLoadingSubscribe(true);
         let checkout = formatCheckout();
         try {
-            let subsc = await subscribe(props.apiKey, appId, paymentId, address, chainName, user, 12, ethersSigner, checkout); //change user choosen period here
+            let subsc = await subscribe(props.apiKey, appId, paymentId, address, chainName, user, Number(selectedMonth), ethersSigner, checkout); //change user choosen period here
             if (subsc.success == "true") {
                 setFinish(true);
                 props.response(subsc);

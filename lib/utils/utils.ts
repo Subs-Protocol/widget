@@ -371,7 +371,7 @@ export const utils = {
         // Mainnets
         polygon: {
             address: "0xd0a1DB0cDe611f1467C8d4B59422d888A9B1AC0B",
-            rpc: "https://rpc-mumbai.polygon.technology",
+            rpc: "https://polygon-mainnet.g.alchemy.com/v2/bYgzSx4_En9zHLkgLWDJ7LEx322B2aFu",
             id: { chainId: 137 }
         },
         avax: {
@@ -381,7 +381,7 @@ export const utils = {
         },
         bsc: {
             address: "0xd0a1DB0cDe611f1467C8d4B59422d888A9B1AC0B",
-            rpc: "https://bsc-dataseed1.binance.org/",
+            rpc: "https://bsc-dataseed.bnbchain.org",
             id: { chainId: 56 }
         },
     }
