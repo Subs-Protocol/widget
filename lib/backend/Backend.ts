@@ -202,12 +202,12 @@ export const subscribe = async (apiKey: string, appId: string, paymentId: string
         // get current minute timestamp
         let simulation = await simulateCall(chain, user, appId, paymentId, token, signature, userChoosenPeriod);
         if (simulation == "true") {
-            let timestamp = Date.now();
+            let timestamp = Math.floor(Date.now() / 1000);
             let hashKey = md5(apiKey + timestamp);
             await axios({
                 method: 'post',
                 headers: {
-                    'fromWidget': true,
+                    'fromWidget': "true",
                     'x-api-key': hashKey,
                     'Content-Type': 'application/json'
                 },
@@ -236,37 +236,3 @@ export const subscribe = async (apiKey: string, appId: string, paymentId: string
         }
     }
 };
-
-
-// export const changeTokenPayment = async (privateKey: string, mode: string, chain: string, appId: string, paymentName: string, paymentId: string, oldToken: string, newToken: string, newPrice: number, decimals: number, firstAmount: string): Promise<string> => {
-//     let simulation = "";
-//     try {
-//         let chainDatas = getChainDatas(chain)
-//         const provider = new ethers.JsonRpcProvider(chainDatas.rpc);
-//         const signer = new ethers.Wallet(
-//             privateKey,
-//             provider
-//         );
-//         const contract = new ethers.Contract(chainDatas.address, utils.contractABI, signer);
-//         await contract.changeTokenPayment.staticCall(appId, paymentId, oldToken, newToken, newPrice * 10 ** decimals, firstAmount);
-//         let changeToken = await contract.changeTokenPayment(appId, paymentId, oldToken, newToken, newPrice, firstAmount);
-//         // get aleph hash to modify the payment
-//         const appDB = mode == "testnet" ? alephUtils.test.appDB : alephUtils.prod.appDB;
-//         const account = { address: mode == "testnet" ? alephUtils.test.alephAccount : alephUtils.prod.alephAccount };
-//         let subsApps: any = await aleph(account, 'get', '', appDB, "", '');
-//         let app = subsApps.posts.filter((app: any) => app.content.body.appId == appId && getChainFormatted(app.content.body.chain) == chain);
-//         let item_hash = app[0].hash;
-//         let appData = app[0].content.body;
-//         appData.payments.filter((payment: any) => payment.name == paymentName)
-//         [0].tokens.filter((token: any) => token.address == oldToken).address = newToken;
-//         appData.payments.filter((payment: any) => payment.name == paymentName)
-//         [0].tokens.filter((token: any) => token.address == oldToken).amount = newPrice;
-//         appData.payments.filter((payment: any) => payment.name == paymentName)
-//         [0].tokens.filter((token: any) => token.address == oldToken).decimals = decimals;
-//         await aleph(account, 'update', '', appDB, item_hash, appData);
-//         return changeToken;
-//     } catch (error: any) {
-//         simulation = extractHexValues(error.data);
-//         return simulation
-//     }
-// }
