@@ -10,13 +10,12 @@ import {
     Select,
     TextInput,
 } from "@mantine/core";
-import React, { FC, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { IconChecks, IconX } from "@tabler/icons-react";
 import { logo } from "../../assets";
 import { capitalizeFirstLetter, formatPeriod, formatPeriodToNormal, getApprovalPeriods, publicUseStyles } from "../../utils";
 import { ReviewProps, allowance, approve, wagmiGetRequiredAmount, subscribe } from "../../backend";
-import { WalletClient, useAccount, useWalletClient } from 'wagmi'
-import { BrowserProvider, JsonRpcSigner } from 'ethers'
+import { useAccount } from 'wagmi'
 import { IconShieldCheckeredFilled } from "@tabler/icons-react";
 import { useForm, zodResolver } from '@mantine/form';
 import { z } from 'zod';
@@ -94,30 +93,6 @@ const SubscribeReview: FC<ReviewProps> = (props) => {
         verifyAllowance();
     }, [selectedMonth]);
 
-
-    function walletClientToSigner(walletClient: WalletClient) {
-        const { account, chain, transport } = walletClient
-        const network = {
-            chainId: chain.id,
-            name: chain.name,
-            ensAddress: chain.contracts?.ensRegistry?.address,
-        }
-        const provider = new BrowserProvider(transport, network)
-        const signer = new JsonRpcSigner(provider, account.address)
-        return signer
-    }
-
-    /** Hook to convert a viem Wallet Client to an ethers.js Signer. */
-    function useEthersSigner({ chainId }: { chainId?: number } = {}) {
-        const { data: walletClient } = useWalletClient({ chainId })
-        return React.useMemo(
-            () => (walletClient ? walletClientToSigner(walletClient) : undefined),
-            [walletClient],
-        )
-    }
-
-    let ethersSigner: any = useEthersSigner();
-
     async function approveToken(userPeriod: number) {
         if (approveDone) return;
         setLoading(true);
@@ -158,7 +133,7 @@ const SubscribeReview: FC<ReviewProps> = (props) => {
         setLoadingSubscribe(true);
         let checkout = formatCheckout();
         try {
-            let subsc = await subscribe(props.apiKey, appId, paymentId, address, chainName, user, Number(selectedMonth), ethersSigner, checkout); //change user choosen period here
+            let subsc = await subscribe(props.apiKey, appId, paymentId, address, chainName, user, Number(selectedMonth), checkout); //change user choosen period here
             if (subsc.success == "true") {
                 setFinish(true);
                 props.response(subsc);

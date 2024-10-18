@@ -3,6 +3,7 @@ import abi from "./subabi.json"
 import { Chain } from "../backend";
 import web3 from "web3"
 import { writeContract } from "@wagmi/core";
+import { config } from "../components/Button/WalletProvider";
 
 
 export const subsStyles = createStyles(
@@ -298,7 +299,7 @@ export const formatAddr = (addr: any) => {
 
 export const cancelSubs = async (chain: any, subsId: string, appId: string, abi: any) => {
     let subsAddress: any = getChainDatas(chain).address;
-    const data = await writeContract({
+    const data = await writeContract(config,{
         address: subsAddress,
         abi: abi,
         functionName: 'cancelSubscription',
@@ -309,7 +310,7 @@ export const cancelSubs = async (chain: any, subsId: string, appId: string, abi:
 
 export const refundSubs = async (chain: any, subsId: string, abi: any) => {
     let subsAddress: any = getChainDatas(chain).address;
-    const data = await writeContract({
+    const data = await writeContract(config,{
         address: subsAddress,
         abi: abi,
         functionName: 'refundSubscription',
@@ -320,7 +321,7 @@ export const refundSubs = async (chain: any, subsId: string, abi: any) => {
 
 export const processSubs = async (chain: any, subsId: string, abi: any) => {
     let subsAddress: any = getChainDatas(chain).address;
-    const data = await writeContract({
+    const data = await writeContract(config,{
         address: subsAddress,
         abi: abi,
         functionName: 'processSubscription',
