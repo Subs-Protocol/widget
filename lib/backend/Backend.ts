@@ -2,13 +2,14 @@ import axios from 'axios';
 import {
     Get as getPost,
 } from "aleph-sdk-ts/dist/messages/post";
-import { erc20ABI } from 'wagmi'
+import { erc20Abi } from 'viem'
 import { AlephApp, AppPayment, PublicData, PublicPaymentIdName } from "./backend.type";
 import { formatAddr, getChainDatas, getChainFormatted, utils } from "../utils/utils";
-import { writeContract, readContract } from "@wagmi/core";
+import { writeContract, readContract, signTypedData } from "@wagmi/core";
 import { APIServer, alephUtils, subsApi } from '../utils';
 import md5 from "blueimp-md5";
 import { ethers } from 'ethers';
+import { config } from '../components/Button/WalletProvider';
 
 export function separate(selectedToken: any) {
     const motsSepares = selectedToken.split(' ');
@@ -98,7 +99,7 @@ export const wagmiGetRequiredAmount = async (appId: string, paymentId: string, c
     // console.log("wagmiGetRequiredAmount : ", appId, paymentId, chain, tokenAddress, user, userChoosenPeriod);
     let subsAddress: any = getChainDatas(chain).address;
     let abi = utils.contractABI;
-    const requiredAmount = await readContract({
+    const requiredAmount = await readContract(config, {
         address: subsAddress,
         abi: abi,
         functionName: 'getRequiredAmount',
@@ -110,9 +111,9 @@ export const wagmiGetRequiredAmount = async (appId: string, paymentId: string, c
 export const approve = async (chain: any, token: any, amount: bigint) => {
     let subsAddress: any = getChainDatas(chain).address;
     let addr: any = formatAddr(token);
-    const data = await writeContract({
+    const data = await writeContract(config, {
         address: addr,
-        abi: erc20ABI,
+        abi: erc20Abi,
         functionName: 'approve',
         args: [subsAddress, amount]
     })
@@ -121,9 +122,9 @@ export const approve = async (chain: any, token: any, amount: bigint) => {
 
 export const allowance = async (chain: string, token: any, user: any) => {
     let subsAddress: any = getChainDatas(chain).address;
-    const data = await readContract({
+    const data = await readContract(config, {
         address: token,
-        abi: erc20ABI,
+        abi: erc20Abi,
         functionName: 'allowance',
         args: [user, subsAddress]
     })
@@ -167,72 +168,82 @@ const simulateCall = async (chain: string, user: string, appId: string, paymentI
     }
 }
 
-export const subscribe = async (apiKey: string, appId: string, paymentId: string, token: string, chain: string, user: string, userChoosenPeriod: number, etherSigner: any, checkout?: any) => {
-    let subsAddress: any = getChainDatas(chain).address;
-    let subsChain: any = getChainDatas(chain).id.chainId;
-    const userNonce: any = await readContract({
-        address: subsAddress,
-        abi: utils.contractABI,
-        functionName: 'nonces',
-        args: [user]
-    });
-    const domain = {
-        name: 'Subs',
-        version: '1',
-        chainId: subsChain,
-        verifyingContract: subsAddress
-    };
-    const value = {
-        appId: appId,
-        paymentId: paymentId,
-        token: token,
-        nonce: userNonce
-    };
-    const types = {
-        Subscription: [
-            { name: 'appId', type: 'uint256' },
-            { name: 'paymentId', type: 'bytes32' },
-            { name: 'token', type: 'address' },
-            { name: 'nonce', type: 'uint256' }
-        ]
-    };
-    let signature = await etherSigner.signTypedData(domain, types, value);
-    if (signature) {
-        let finalResponse: any;
-        // get current minute timestamp
-        let simulation = await simulateCall(chain, user, appId, paymentId, token, signature, userChoosenPeriod);
-        if (simulation == "true") {
-            let timestamp = Math.floor(Date.now() / 1000);
-            let hashKey = md5(apiKey + timestamp);
-            await axios({
-                method: 'post',
-                headers: {
-                    'fromWidget': "true",
-                    'x-api-key': hashKey,
-                    'Content-Type': 'application/json'
-                },
-                data: {
-                    'chain': chain,
-                    'user': user,
-                    'appId': appId,
-                    'paymentId': paymentId,
-                    'token': token,
-                    'sig': signature,
-                    'userChoosenPeriod': userChoosenPeriod,
-                    'checkout': checkout
-                },
-                url: subsApi + '/creator/subscribe',
-            })
-                .then(function (response) {
-                    // console.log("subscribe response : ", response.data);
-                    finalResponse = response.data;
-                }).catch(function (error) {
-                    // console.log("subscribe error : ", error.response.data);
-                    finalResponse = error.response.data;
-                });
-            return finalResponse;
-        } else {
-            return finalResponse = { simulation: false, message: simulation }
+export const subscribe = async (apiKey: string, appId: string, paymentId: string, token: string, chain: string, user: string, userChoosenPeriod: number, checkout?: any) => {
+    try {
+        let subsAddress: any = getChainDatas(chain).address;
+        let subsChain: any = getChainDatas(chain).id.chainId;
+        const userNonce: any = await readContract(config, {
+            address: subsAddress,
+            abi: utils.contractABI,
+            functionName: 'nonces',
+            args: [user]
+        });
+        const domain = {
+            name: 'Subs',
+            version: '1',
+            chainId: subsChain,
+            verifyingContract: subsAddress
+        };
+        const value = {
+            appId: appId,
+            paymentId: paymentId,
+            token: token,
+            nonce: userNonce
+        };
+        const types = {
+            Subscription: [
+                { name: 'appId', type: 'uint256' },
+                { name: 'paymentId', type: 'bytes32' },
+                { name: 'token', type: 'address' },
+                { name: 'nonce', type: 'uint256' }
+            ]
+        };
+        const signature = await signTypedData(config, {
+            types: types,
+            primaryType: "Subscription",
+            domain: domain,
+            message: value,
+        });
+        // let signature = await etherSigner.signTypedData(domain, types, value);
+        if (signature) {
+            let finalResponse: any;
+            // get current minute timestamp
+            let simulation = await simulateCall(chain, user, appId, paymentId, token, signature, userChoosenPeriod);
+            if (simulation == "true") {
+                let timestamp = Math.floor(Date.now() / 1000);
+                let hashKey = md5(apiKey + timestamp);
+                await axios({
+                    method: 'post',
+                    headers: {
+                        'fromWidget': "true",
+                        'x-api-key': hashKey,
+                        'Content-Type': 'application/json'
+                    },
+                    data: {
+                        'chain': chain,
+                        'user': user,
+                        'appId': appId,
+                        'paymentId': paymentId,
+                        'token': token,
+                        'sig': signature,
+                        'userChoosenPeriod': userChoosenPeriod,
+                        'checkout': checkout
+                    },
+                    url: subsApi + '/creator/subscribe',
+                })
+                    .then(function (response) {
+                        // console.log("subscribe response : ", response.data);
+                        finalResponse = response.data;
+                    }).catch(function (error) {
+                        // console.log("subscribe error : ", error.response.data);
+                        finalResponse = error.response.data;
+                    });
+                return finalResponse;
+            } else {
+                return finalResponse = { simulation: false, message: simulation }
+            }
         }
+    } catch (error) {
+        console.log("subscribe error : ", error);
     }
 };
