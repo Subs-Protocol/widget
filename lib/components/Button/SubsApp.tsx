@@ -1,27 +1,28 @@
 import { useEffect, useState } from "react";
+import { Button, Flex, Modal, Select, Text, rem } from "@mantine/core";
 import {
-  Button,
-  Flex,
-  Modal,
-  Select,
-  Text,
-  rem,
-} from "@mantine/core";
-import { getAppDatas, getPayment, getPaymentIds, separate, Choice, FormPaymentValues, FormTokenValues, PublicPaymentIdName, SubsProps } from "../../backend";
+  getAppDatas,
+  getPayment,
+  getPaymentIds,
+  separate,
+  Choice,
+  FormPaymentValues,
+  FormTokenValues,
+  PublicPaymentIdName,
+  SubsProps,
+} from "../../backend";
 import { formatAddr, formatPeriod, getChainId, subsStyles } from "../../utils";
-import { useWeb3Modal } from '@web3modal/wagmi/react'
 import { useDisclosure } from "@mantine/hooks";
 import { IconShieldCheckeredFilled } from "@tabler/icons-react";
 import SubscribeReview from "../Modal";
-import { useAccount, useNetwork } from "wagmi";
-import { switchNetwork } from '@wagmi/core';
-
-
+import { useAccount } from "wagmi";
+import { useAppKit } from "@reown/appkit/react";
+import { switchChain } from "wagmi/actions";
+import { config } from "./WalletProvider";
 
 export const SubsApp = (props: SubsProps) => {
-  const { address, isConnected } = useAccount()
-  const { chain } = useNetwork();
-  const { open: openWeb3 } = useWeb3Modal();
+  const { address, isConnected, chain } = useAccount();
+  const { open: openWeb3 } = useAppKit();
   const [openedPT] = useState(false);
   const [lpayments, setPayments] = useState<FormPaymentValues>();
   const [token, setToken] = useState("");
@@ -33,28 +34,27 @@ export const SubsApp = (props: SubsProps) => {
     [] as PublicPaymentIdName[]
   );
 
-
   const paymentClasses = subsStyles({
     tokenOpened: openedPT,
     selectedBtn: 0,
     defaultPayment: undefined,
     selectLabel: false,
-    userWidth: props.width ? props.width > 0 ? props.width : 200 : 200
+    userWidth: props.width ? (props.width > 0 ? props.width : 200) : 200,
   });
   const cryptoClasses = subsStyles({
     tokenOpened: openedPT,
     selectedBtn: 1,
     defaultPayment: props.defaultPayment,
     selectLabel: true,
-    userWidth: props.width ? props.width > 0 ? props.width : 200 : 200
+    userWidth: props.width ? (props.width > 0 ? props.width : 200) : 200,
   });
   const subscribeClasses = subsStyles({
     tokenOpened: openedPT,
     selectedBtn: 2,
     defaultPayment: props.defaultPayment,
     selectLabel: false,
-    userWidth: props.width ? props.width > 0 ? props.width : 200 : 200,
-    choice: props.choice ? props.choice.token : ""
+    userWidth: props.width ? (props.width > 0 ? props.width : 200) : 200,
+    choice: props.choice ? props.choice.token : "",
   });
 
   const linkStyles = {
@@ -63,8 +63,17 @@ export const SubsApp = (props: SubsProps) => {
   };
 
   async function buildPayment(payment: string) {
-    let alapp = await getAppDatas(props.chain, props.address, props.appId, props.mode);
-    const payIds: any = await getPaymentIds(props.appId, props.chain, props.mode);
+    let alapp = await getAppDatas(
+      props.chain,
+      props.address,
+      props.appId,
+      props.mode
+    );
+    const payIds: any = await getPaymentIds(
+      props.appId,
+      props.chain,
+      props.mode
+    );
     if (payment) {
       let payments: any = await getPayment(
         props.defaultPayment ? props.defaultPayment : "",
@@ -75,10 +84,10 @@ export const SubsApp = (props: SubsProps) => {
       );
       setPayments(payments);
     } else {
-      let paymentNames: string[] = []
-      alapp?.app.payments?.map((newApp:any) => {
+      let paymentNames: string[] = [];
+      alapp?.app.payments?.map((newApp: any) => {
         paymentNames.push(newApp.name);
-      })
+      });
       setAppPayments(paymentNames);
     }
     setPaymentIds(payIds);
@@ -87,9 +96,22 @@ export const SubsApp = (props: SubsProps) => {
   }
 
   async function buildChoice() {
-    let paymt: any = await getPayment(`${props.choice?.payment}`, props.chain, props.address, props.appId, props.mode);
-    let wantedToken: FormTokenValues = paymt?.tokens.filter((token: FormTokenValues) => formatAddr(token.address) == formatAddr(props.choice?.token))[0];
-    const payIds: any = await getPaymentIds(props.appId, props.chain, props.mode);
+    let paymt: any = await getPayment(
+      `${props.choice?.payment}`,
+      props.chain,
+      props.address,
+      props.appId,
+      props.mode
+    );
+    let wantedToken: FormTokenValues = paymt?.tokens.filter(
+      (token: FormTokenValues) =>
+        formatAddr(token.address) == formatAddr(props.choice?.token)
+    )[0];
+    const payIds: any = await getPaymentIds(
+      props.appId,
+      props.chain,
+      props.mode
+    );
     let pId = payIds.filter(
       (p: PublicPaymentIdName) => p.paymentName === paymt?.name
     );
@@ -99,7 +121,7 @@ export const SubsApp = (props: SubsProps) => {
       period: paymt.periodType,
       address: wantedToken.address,
       decimals: wantedToken.decimals,
-      paymentId: pId[0].paymentId
+      paymentId: pId[0].paymentId,
     };
     setFinalChoice(choice);
   }
@@ -115,7 +137,7 @@ export const SubsApp = (props: SubsProps) => {
   // get token amount + symbol
   const buildTokenDatas = () => {
     let tokenDatas: string[] = [];
-    lpayments?.tokens.map((token:any) => {
+    lpayments?.tokens.map((token: any) => {
       const { symbol, name, amount } = token;
       tokenDatas.push(`${amount} ${symbol?.length > 0 ? symbol : name}`);
     });
@@ -123,32 +145,43 @@ export const SubsApp = (props: SubsProps) => {
   };
 
   const getTokenInfo = (token: string, amount: number) => {
-    let address = lpayments?.tokens.filter((t:any) => ((t.symbol === token || t.name === token) && t.amount == amount))[0].address;
-    let decimals = lpayments?.tokens.filter((t:any) => ((t.symbol === token || t.name === token) && t.amount == amount))[0].decimals;
-    return [address, decimals]
-  }
+    let address = lpayments?.tokens.filter(
+      (t: any) => (t.symbol === token || t.name === token) && t.amount == amount
+    )[0].address;
+    let decimals = lpayments?.tokens.filter(
+      (t: any) => (t.symbol === token || t.name === token) && t.amount == amount
+    )[0].decimals;
+    return [address, decimals];
+  };
 
   const getModal = async () => {
     let id = getChainId(props.chain);
     if (isConnected) {
       if (chain?.id == id.chainId) {
-        if (finalChoice.amount > 0 && finalChoice.address.length > 0 && finalChoice.decimals > 0) {
-          open()
+        if (
+          finalChoice.amount > 0 &&
+          finalChoice.address.length > 0 &&
+          finalChoice.decimals > 0
+        ) {
+          open();
         }
       } else {
-        await switchNetwork(id);
-        if (finalChoice.amount > 0 && finalChoice.address.length > 0 && finalChoice.decimals > 0) {
-          open()
+        await switchChain(config, id);
+        if (
+          finalChoice.amount > 0 &&
+          finalChoice.address.length > 0 &&
+          finalChoice.decimals > 0
+        ) {
+          open();
         }
       }
     } else {
-      await openWeb3()
+      await openWeb3();
     }
-  }
+  };
 
   return (
     <Flex justify="center" align="center" direction="column" gap="md">
-
       <Modal
         opened={openedTg}
         onClose={close}
@@ -174,10 +207,13 @@ export const SubsApp = (props: SubsProps) => {
       </Modal>
 
       <Flex justify="flex-start" align="flex-start" direction="row">
-        {props.choice ? "" :
+        {props.choice ? (
+          ""
+        ) : (
           <>
-            {props.defaultPayment ?
-              "" :
+            {props.defaultPayment ? (
+              ""
+            ) : (
               <Select
                 withinPortal
                 data={appPayments}
@@ -195,12 +231,16 @@ export const SubsApp = (props: SubsProps) => {
                 placeholder="select payment"
                 classNames={paymentClasses.classes}
               />
-            }
-            {props.choice ? "" :
+            )}
+            {props.choice ? (
+              ""
+            ) : (
               <Select
                 withinPortal
                 data={buildTokenDatas()}
-                label={lpayments ? `per ${formatPeriod(lpayments.periodType)}` : ""}
+                label={
+                  lpayments ? `per ${formatPeriod(lpayments.periodType)}` : ""
+                }
                 placeholder="select crypto"
                 value={token}
                 onChange={(e) => {
@@ -209,22 +249,34 @@ export const SubsApp = (props: SubsProps) => {
                   let paymentId = paymentIds.filter(
                     (pay) => pay.paymentName === lpayments?.name
                   );
-                  setFinalChoice({ amount: amount, token: token, period: lpayments?.periodType ? lpayments?.periodType : "", address: getTokenInfo(token, amount)[0], decimals: getTokenInfo(token, amount)[1], paymentId: paymentId[0].paymentId })
+                  setFinalChoice({
+                    amount: amount,
+                    token: token,
+                    period: lpayments?.periodType ? lpayments?.periodType : "",
+                    address: getTokenInfo(token, amount)[0],
+                    decimals: getTokenInfo(token, amount)[1],
+                    paymentId: paymentId[0].paymentId,
+                  });
                 }}
                 classNames={cryptoClasses.classes}
               />
-            }
+            )}
           </>
-        }
-        <Button h={48} classNames={subscribeClasses.classes} color={props.color ? props.color : `blue`} onClick={async () => {
-          await getModal();
-        }}>
+        )}
+        <Button
+          h={48}
+          classNames={subscribeClasses.classes}
+          color={props.color ? props.color : `blue`}
+          onClick={async () => {
+            await getModal();
+          }}
+        >
           Subscribe
         </Button>
       </Flex>
       <a href="https://subsprotocol.com/" target="_blank" style={linkStyles}>
         <Flex direction="row">
-        <IconShieldCheckeredFilled size={22} />
+          <IconShieldCheckeredFilled size={22} />
           {"  "}
           <Text align="end" ml={5}>
             Secured by
@@ -236,6 +288,5 @@ export const SubsApp = (props: SubsProps) => {
       </a>
     </Flex>
   );
-
-}
+};
 export default SubsApp;
