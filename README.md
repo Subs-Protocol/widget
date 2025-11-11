@@ -27,14 +27,16 @@ const handleResponse = (response : {success:boolean, message: string}) => {
 }
 
 return(
-<Subs address={"0x135B48F76870C2e0d5440dE8F5E7b7A6a7d52720"} 
-        appId="40" 
-        chain={"mumbai"} 
-        color='red'
-        width={200}
-        defaultPayment='Premium'
-        choice={["payment", "token"]}
-        dataOnSubs={handleResponse} />
+<Subs address={"0x8e468E7Cbf7E7E056A7591C796F2dd4C5C255591"} 
+        appId="4" 
+        chain={"polygon"}
+        mode='mainnet'
+        apiKey='x123123x'
+        ? color='red'
+        ? width={200}
+        ? defaultPayment='30Days'
+        ? choice={"payment", "token"}
+        ? dataOnSubs={handleResponse} />
 )
 ```
 
@@ -43,9 +45,10 @@ return(
 ### Just widget without default payment
 
 ```javascript
-<Subs address={"0x135B48F76870C2e0d5440dE8F5E7b7A6a7d52720"} 
-        appId="40" 
-        chain={"mumbai"} 
+<Subs address={"0x8e468E7Cbf7E7E056A7591C796F2dd4C5C255591"} 
+        appId="4" 
+        chain={"polygon"} 
+        mode='mainnet'
         dataOnSubs={handleResponse} 
 />
 ```
@@ -57,10 +60,12 @@ return(
 ### Widget with default payment
 
 ```javascript
-<Subs address={"0x135B48F76870C2e0d5440dE8F5E7b7A6a7d52720"} 
-        appId="40" 
-        chain={"mumbai"} 
-        defaultPayment='Premium'
+<Subs address={"0x8e468E7Cbf7E7E056A7591C796F2dd4C5C255591"} 
+        appId="4" 
+        chain={"polygon"}
+        mode='mainnet'
+        apiKey='x123123x'
+        defaultPayment='30Days'
         dataOnSubs={handleResponse} 
 />
 ```
@@ -72,13 +77,15 @@ return(
 ### Widget with default payment and preselected token 
 
 ```javascript
-<Subs address={"0x135B48F76870C2e0d5440dE8F5E7b7A6a7d52720"} 
-        appId="40" 
-        chain={"mumbai"} 
-        defaultPayment='Premium'
+<Subs address={"0x8e468E7Cbf7E7E056A7591C796F2dd4C5C255591"} 
+        appId="4" 
+        chain={"polygon"}
+        mode='mainnet'
+        apiKey='x123123x'
+        defaultPayment='30Days'
         choice={{
-              payment: "Premium",
-              token: "0x8e468E7Cbf7E7E056A7591C796F2dd4C5C255591"
+              payment: "30Days",
+              token: "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359"
         }}
         dataOnSubs={handleResponse} 
 />
@@ -100,13 +107,32 @@ You can choose multiple ways to present your button:
 - **defaultPayment**: Payment name, if you want to show a particular payment
 - **choice**: Payment name and token address, prechoose and only keep the Subscribe button
 - **response**: Informs you if a subscription is done successfully.
+- **mode**: Choose mainnet or testnet, depending on the blockchain you are using.
+- **apiKey**: Api Key of the AppID. You can find your Key whan managing our App.
+
+
+## Get your Api Key
+
+After creating your App go on the My Apps section on the left side of the website.
+
+Then click on Manage of the App you want to set up
+
+<div align="center">
+<img src="https://docs.subsprotocol.com/~gitbook/image?url=https%3A%2F%2F1911528868-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252FMi4ivT4S6SjuAElL2Iuo%252Fuploads%252Fv2dYRsdy9x1iyrMpHwah%252Fapps.png%3Falt%3Dmedia%26token%3D0dabfea4-08c5-4b40-8e60-05f3a23b8a49&width=768&dpr=1&quality=100&sign=d0c091c9&sv=1" style="width:50%;" />
+</div>
+
+Wait a few seconds, your Api Key will appear on you screen right here.
+
+<div align="center">
+<img src="https://docs.subsprotocol.com/~gitbook/image?url=https%3A%2F%2F1911528868-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252FMi4ivT4S6SjuAElL2Iuo%252Fuploads%252F2ZV01gupXeuqyjS4CLet%252Fkey.jpg%3Falt%3Dmedia%26token%3D0924db74-68db-4ffd-ac66-b519b7e327c4&width=768&dpr=1&quality=100&sign=88a4b072&sv=1" style="width:50%;" />
+</div>
 
 ## Popup
 
 If the Popup doesn't show up, some parts of your CSS may cause some issues.
 
 <div align="center">
-<img src="https://docs.subsprotocol.com/~gitbook/image?url=https:%2F%2F1911528868-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252FMi4ivT4S6SjuAElL2Iuo%252Fuploads%252FARZgxDKQwkoBmJhTq6Ja%252Fimage.png%3Falt=media%26token=7afadffc-c590-4289-9418-bcbc9abe2f63&width=768&dpr=4&quality=100&sign=83d34a8efd1eba62be982bbf744b457bbd0d51b4c5bbf7ad2139bd8464c14707" />
+<img src="https://docs.subsprotocol.com/~gitbook/image?url=https%3A%2F%2F1911528868-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252FMi4ivT4S6SjuAElL2Iuo%252Fuploads%252Fn4U204jUrDnMXvaEU1Rg%252Fimage.png%3Falt%3Dmedia%26token%3Dfaecc038-ff6e-4f13-9b68-9391ae25a5fc&width=768&dpr=4&quality=100&sign=e3a70967&sv=1" style="width:50%;" />
 </div>
 
 ### First view of the Popup
@@ -114,7 +140,7 @@ If the Popup doesn't show up, some parts of your CSS may cause some issues.
 First, you need to accept our terms and conditions by checking the check box.
 
 <div align="center">
-<img src="https://docs.subsprotocol.com/~gitbook/image?url=https:%2F%2F1911528868-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252FMi4ivT4S6SjuAElL2Iuo%252Fuploads%252Fy6XMK0Ov2fA1M2naIuTz%252Fimage.png%3Falt=media%26token=331e6056-fd65-40b0-b17d-fa5ae00a01dc&width=768&dpr=4&quality=100&sign=938de54f7d866e370c7c4d40c25e45b03ea85b125e77271a5a00310895293282" />
+<img src="https://docs.subsprotocol.com/~gitbook/image?url=https%3A%2F%2F1911528868-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252FMi4ivT4S6SjuAElL2Iuo%252Fuploads%252FHZj7YYLkj8q9HlFjFqml%252Fimage.png%3Falt%3Dmedia%26token%3D7e8f02c2-12d9-47c1-85db-c56c49afaac7&width=768&dpr=1&quality=100&sign=75c940aa&sv=1" style="width:50%;" />
 </div>
 
 ### Approval Step
@@ -122,7 +148,7 @@ First, you need to accept our terms and conditions by checking the check box.
 Users will need to approve an amount of token before the subscription. We will later debit the amount with TransferFrom calls periodically.
 
 <div align="center">
-<img src="https://docs.subsprotocol.com/~gitbook/image?url=https:%2F%2F1911528868-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252FMi4ivT4S6SjuAElL2Iuo%252Fuploads%252FyDMy64lp3ApdWteJdBFx%252Fimage.png%3Falt=media%26token=a891cde7-018d-4693-8771-3651c1fa02de&width=768&dpr=4&quality=100&sign=bf71b82dee9eb2ab3a2d5d24773b2e79b3f930433539d205df7be687c8b92dc6" />
+<img src="https://docs.subsprotocol.com/~gitbook/image?url=https%3A%2F%2F1911528868-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252FMi4ivT4S6SjuAElL2Iuo%252Fuploads%252F0GWBtz620YeaN3Ry7lio%252Fimage.png%3Falt%3Dmedia%26token%3D10e72901-a636-4af8-9173-1a5a2cba55f1&width=768&dpr=4&quality=100&sign=4e17a53d&sv=1" style="width:50%;"/>
 </div>
 
 ### Sign to Subscribe
