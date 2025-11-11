@@ -55,7 +55,7 @@ function App() {
         //   payment: "Plan Mensuel",
         //   token: "0x8e468E7Cbf7E7E056A7591C796F2dd4C5C255591",
         // }}
-        width={300} apiKey={'ottiz1qjlyjo6lvchyhlivxts4soex'} mode={'mainnet'} />
+        width={300} apiKey={'cw5qrrqushne2vht7yb4o9vk1uf0a7'} mode={'mainnet'} />
     </>
   )
 }

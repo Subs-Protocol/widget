@@ -107,6 +107,44 @@
       ],
       "stateMutability": "view",
       "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_user",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_appId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "_paymentId",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "_token",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes",
+          "name": "sig",
+          "type": "bytes"
+        },
+        {
+          "internalType": "uint256",
+          "name": "userChoosenPeriod",
+          "type": "uint256"
+        }
+      ],
+      "name": "permit_subscribe",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
     }
   ]
 }

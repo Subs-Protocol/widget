@@ -3,6 +3,7 @@ import abi from "./subabi.json"
 import { Chain } from "../backend";
 import web3 from "web3"
 import { writeContract } from "@wagmi/core";
+import { config } from "../components/Button/WalletProvider";
 
 
 export const subsStyles = createStyles(
@@ -298,7 +299,7 @@ export const formatAddr = (addr: any) => {
 
 export const cancelSubs = async (chain: any, subsId: string, appId: string, abi: any) => {
     let subsAddress: any = getChainDatas(chain).address;
-    const data = await writeContract({
+    const data = await writeContract(config,{
         address: subsAddress,
         abi: abi,
         functionName: 'cancelSubscription',
@@ -309,7 +310,7 @@ export const cancelSubs = async (chain: any, subsId: string, appId: string, abi:
 
 export const refundSubs = async (chain: any, subsId: string, abi: any) => {
     let subsAddress: any = getChainDatas(chain).address;
-    const data = await writeContract({
+    const data = await writeContract(config,{
         address: subsAddress,
         abi: abi,
         functionName: 'refundSubscription',
@@ -320,7 +321,7 @@ export const refundSubs = async (chain: any, subsId: string, abi: any) => {
 
 export const processSubs = async (chain: any, subsId: string, abi: any) => {
     let subsAddress: any = getChainDatas(chain).address;
-    const data = await writeContract({
+    const data = await writeContract(config,{
         address: subsAddress,
         abi: abi,
         functionName: 'processSubscription',
@@ -371,7 +372,7 @@ export const utils = {
         // Mainnets
         polygon: {
             address: "0xd0a1DB0cDe611f1467C8d4B59422d888A9B1AC0B",
-            rpc: "https://rpc-mumbai.polygon.technology",
+            rpc: "https://polygon-mainnet.g.alchemy.com/v2/bYgzSx4_En9zHLkgLWDJ7LEx322B2aFu",
             id: { chainId: 137 }
         },
         avax: {
@@ -381,7 +382,7 @@ export const utils = {
         },
         bsc: {
             address: "0xd0a1DB0cDe611f1467C8d4B59422d888A9B1AC0B",
-            rpc: "https://bsc-dataseed1.binance.org/",
+            rpc: "https://bsc-dataseed.bnbchain.org",
             id: { chainId: 56 }
         },
     }
